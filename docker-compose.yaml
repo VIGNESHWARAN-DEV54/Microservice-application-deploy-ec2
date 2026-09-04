@@ -1,0 +1,104 @@
+services:
+    mongodb:
+        image: mongo:8.0.4
+        container_name: mongodb
+        ports:
+            - "27017:27017"
+        networks:
+            - microservice
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        container_name: client
+        ports:
+            - "3000:3000"
+        networks:
+            - microservice
+        environment:
+            - HOST=0.0.0.0
+            - REACT_APP_API_URL=http://localhost:5000/api
+            - BROWSER=none
+        depends_on:
+            - gateway
+    gateway:
+        build:
+            context: ./server/gateway
+            dockerfile: Dockerfile
+        container_name: gateway
+        ports:
+            - "5000:5000"
+        networks:
+            - microservice
+        environment:
+            - PORT=5000
+            - AUTH_SERVICE_URL=http://localhost:5001
+            - PRODUCTS_SERVICE_URL=http://localhost:5002
+            - USERS_SERVICE_URL=http://localhost:5003
+            - ORDERS_SERVICE_URL=http://localhost:5004
+            - NODE_ENV=development
+    auth:
+        build:
+            context: ./server/services/auth
+            dockerfile: Dockerfile
+        container_name: auth
+        ports:
+            - "5001:5001"
+        networks:
+            - microservice
+        environment:
+            - PORT=5001
+            - MONGODB_URI=mongodb://mongodb:27017
+            - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+            - JWT_EXPIRES_IN=7d
+            - NODE_ENV=development
+    products:
+        build:
+            context: ./server/services/products
+            dockerfile: Dockerfile
+        container_name: products
+        ports:
+            - "5002:5002"
+        networks:
+            - microservice
+        environment:
+            - PORT=5002
+            - MONGODB_URI=mongodb://mongodb:27017
+            - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+            - JWT_EXPIRES_IN=7d
+            - NODE_ENV=development   
+    users:
+        build:
+            context: ./server/services/users
+            dockerfile: Dockerfile
+        container_name: users
+        ports:
+            - "5003:5003"
+        networks:
+            - microservice
+        environment:
+            - PORT=5003
+            - MONGODB_URI=mongodb://mongodb:27017
+            - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+            - JWT_EXPIRES_IN=7d
+            - NODE_ENV=development 
+    orders:
+        build:
+            context: ./server/services/orders
+            dockerfile: Dockerfile
+        container_name: orders
+        ports:
+            - "5004:5004"
+        networks:
+            - microservice
+        environment:
+            - PORT=5004
+            - MONGODB_URI=mongodb://mongodb:27017
+            - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+            - JWT_EXPIRES_IN=7d
+            - NODE_ENV=development
+        
+networks:
+    microservice:
+        driver: bridge
+
