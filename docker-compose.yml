@@ -1,0 +1,110 @@
+services:
+
+  mongo:
+    image: mongo:8.0.4
+    container_name: ecommerce-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - ecommerce-network
+
+  product-service:
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+    container_name: ecommerce-product-service
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - MONGO_URL=mongodb://mongo:27017/products
+    depends_on:
+      - mongo
+    networks:
+      - ecommerce-network
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: ecommerce-user-service
+    restart: always
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URL=mongodb://mongo:27017/users
+    depends_on:
+      - mongo
+    networks:
+      - ecommerce-network
+
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: ecommerce-order-service
+    restart: always
+    ports:
+      - "5003:5003"
+    environment:
+      - PORT=5003
+      - MONGO_URL=mongodb://mongo:27017/orders
+    depends_on:
+      - mongo
+    networks:
+      - ecommerce-network
+
+
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: ecommerce-payment-service
+    restart: always
+    ports:
+      - "5004:5004"
+    environment:
+      - PORT=5004
+      - MONGO_URL=mongodb://mongo:27017/payments
+    depends_on:
+      - mongo
+    networks:
+      - ecommerce-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend-client
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - REACT_APP_PRODUCT_SERVICE_URL=http://localhost:5001
+      - REACT_APP_USER_SERVICE_URL=http://localhost:5002
+      - REACT_APP_ORDER_SERVICE_URL=http://localhost:5003
+      - REACT_APP_PAYMENT_SERVICE_URL=http://localhost:5004
+    depends_on:
+      - product-service
+      - user-service
+      - order-service
+      - payment-service
+    networks:
+      - ecommerce-network
+
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  ecommerce-network:
+    driver: bridge

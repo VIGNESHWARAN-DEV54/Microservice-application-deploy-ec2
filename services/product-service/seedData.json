@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Ultra Slim Laptop Pro 15",
+    "description": "High-performance laptop featuring 16GB RAM, 512GB SSD, Intel Core i7 processor, and vibrant 15.6-inch Retina display.",
+    "price": 899.99,
+    "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&auto=format&fit=crop&q=80",
+    "category": "Computers",
+    "stock": 25
+  },
+  {
+    "name": "Galaxy Smartphone 5G",
+    "description": "6.7-inch AMOLED 120Hz display, 128GB storage, Triple 64MP camera system, all-day battery life with fast charging.",
+    "price": 649.99,
+    "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&auto=format&fit=crop&q=80",
+    "category": "Mobiles",
+    "stock": 40
+  },
+  {
+    "name": "Wireless Noise Cancelling Headphones",
+    "description": "Premium over-ear Bluetooth headphones with active noise cancellation, deep bass, and 30-hour battery life.",
+    "price": 149.99,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+    "category": "Audio",
+    "stock": 35
+  },
+  {
+    "name": "RGB Mechanical Gaming Keyboard",
+    "description": "Customizable RGB backlit mechanical keyboard with responsive blue switches and detachable wrist rest.",
+    "price": 79.99,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80",
+    "category": "Accessories",
+    "stock": 50
+  },
+  {
+    "name": "Ergonomic Wireless Gaming Mouse",
+    "description": "Precision optical sensor up to 16,000 DPI, ultra-lightweight ergonomic honeycomb shell, and lag-free wireless connection.",
+    "price": 49.99,
+    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&auto=format&fit=crop&q=80",
+    "category": "Accessories",
+    "stock": 60
+  },
+  {
+    "name": "Fitness Smart Watch Series X",
+    "description": "Waterproof smartwatch with continuous heart rate monitor, SpO2 sensor, sleep tracking, and built-in GPS.",
+    "price": 129.99,
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
+    "category": "Wearables",
+    "stock": 30
+  },
+  {
+    "name": "4K Ultra HD IPS Gaming Monitor 27\"",
+    "description": "27-inch 4K UHD IPS display, 144Hz refresh rate, 1ms response time, HDR400, and ultra-thin bezels for immersive visuals.",
+    "price": 329.99,
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80",
+    "category": "Computers",
+    "stock": 20
+  },
+  {
+    "name": "Smart Tablet Air 10.5\"",
+    "description": "Versatile lightweight tablet with 10.5-inch 2K touchscreen, stylus pen support, stereo quad-speakers, and 64GB storage.",
+    "price": 299.99,
+    "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80",
+    "category": "Computers",
+    "stock": 28
+  },
+  {
+    "name": "4K Digital Mirrorless Camera",
+    "description": "Compact mirrorless camera with 24.2MP APS-C sensor, 4K video recording, high-speed autofocus, and interchangeable lens.",
+    "price": 599.99,
+    "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&auto=format&fit=crop&q=80",
+    "category": "Cameras",
+    "stock": 15
+  },
+  {
+    "name": "Portable Bluetooth Waterproof Speaker",
+    "description": "Rugged IPX7 waterproof Bluetooth speaker with 360-degree punchy stereo sound, dual passive radiators, and 12-hour playtime.",
+    "price": 59.99,
+    "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&auto=format&fit=crop&q=80",
+    "category": "Audio",
+    "stock": 45
+  }
+]

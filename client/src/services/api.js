@@ -1,75 +1,117 @@
-import axios from 'axios';
+// Base URLs configured from environment variables or defaults
+const PRODUCT_URL = process.env.REACT_APP_PRODUCT_SERVICE_URL || 'http://localhost:5001';
+const USER_URL = process.env.REACT_APP_USER_SERVICE_URL || 'http://localhost:5002';
+const ORDER_URL = process.env.REACT_APP_ORDER_SERVICE_URL || 'http://localhost:5003';
+const PAYMENT_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL || 'http://localhost:5004';
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to attach JWT token
-API.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('shophub_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response interceptor for clear error handling
-API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const message = error.response?.data?.message || error.message || 'An unexpected error occurred';
-    return Promise.reject(new Error(message));
-  }
-);
-
-// API Service Modules
-export const authService = {
-  login: (credentials) => API.post('/auth/login', credentials),
-  register: (userData) => API.post('/auth/register', userData),
-  getMe: () => API.get('/auth/me'),
+// ===================== PRODUCT SERVICE =====================
+export const fetchProducts = async (category = '') => {
+  const query = category ? `?category=${encodeURIComponent(category)}` : '';
+  const res = await fetch(`${PRODUCT_URL}/api/products${query}`);
+  if (!res.ok) throw new Error('Failed to fetch products');
+  return res.json();
 };
 
-export const productService = {
-  getProducts: (params) => API.get('/products', { params }),
-  getFeaturedProducts: () => API.get('/products/featured'),
-  getProductById: (id) => API.get(`/products/${id}`),
-  createProduct: (data) => API.post('/products', data),
-  updateProduct: (id, data) => API.put(`/products/${id}`, data),
-  deleteProduct: (id) => API.delete(`/products/${id}`),
-  addReview: (id, reviewData) => API.post(`/products/${id}/reviews`, reviewData),
+export const fetchProductById = async (id) => {
+  const res = await fetch(`${PRODUCT_URL}/api/products/${id}`);
+  if (!res.ok) throw new Error('Product not found');
+  return res.json();
 };
 
-export const cartService = {
-  getCart: () => API.get('/cart'),
-  addToCart: (productId, quantity = 1) => API.post('/cart', { productId, quantity }),
-  updateCartItem: (itemId, quantity) => API.put(`/cart/${itemId}`, { quantity }),
-  removeFromCart: (itemId) => API.delete(`/cart/${itemId}`),
-  clearCart: () => API.delete('/cart'),
+export const searchProducts = async (name) => {
+  if (!name.trim()) return fetchProducts();
+  const res = await fetch(`${PRODUCT_URL}/api/products/search/${encodeURIComponent(name)}`);
+  if (!res.ok) throw new Error('Failed searching products');
+  return res.json();
 };
 
-export const userService = {
-  getProfile: () => API.get('/users/profile'),
-  updateProfile: (data) => API.put('/users/profile', data),
-  addAddress: (addressData) => API.post('/users/addresses', addressData),
-  deleteAddress: (addressId) => API.delete(`/users/addresses/${addressId}`),
-  getWishlist: () => API.get('/users/wishlist'),
-  addToWishlist: (productId) => API.post('/users/wishlist', { productId }),
-  removeFromWishlist: (productId) => API.delete(`/users/wishlist/${productId}`),
+export const seedSampleProducts = async () => {
+  const res = await fetch(`${PRODUCT_URL}/api/products/seed`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (!res.ok) throw new Error('Failed to seed products');
+  return res.json();
 };
 
-export const orderService = {
-  createOrder: (orderData) => API.post('/orders', orderData),
-  getMyOrders: () => API.get('/orders/myorders'),
-  getAllOrders: () => API.get('/orders'),
-  getOrderById: (id) => API.get(`/orders/${id}`),
-  payOrder: (id, paymentDetails) => API.put(`/orders/${id}/pay`, paymentDetails),
-  updateOrderStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
+// ===================== USER SERVICE =====================
+export const registerUser = async (userData) => {
+  const res = await fetch(`${USER_URL}/api/users/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Registration failed');
+  return data;
 };
 
-export default API;
+export const loginUser = async (credentials) => {
+  const res = await fetch(`${USER_URL}/api/users/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Login failed');
+  return data;
+};
+
+export const fetchUserProfile = async (userId) => {
+  const res = await fetch(`${USER_URL}/api/users/${userId}`);
+  if (!res.ok) throw new Error('Failed to fetch user profile');
+  return res.json();
+};
+
+// ===================== ORDER SERVICE =====================
+export const createOrder = async (orderData) => {
+  const res = await fetch(`${ORDER_URL}/api/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(orderData)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to create order');
+  return data;
+};
+
+export const fetchOrders = async (userId = '') => {
+  const query = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+  const res = await fetch(`${ORDER_URL}/api/orders${query}`);
+  if (!res.ok) throw new Error('Failed to fetch orders');
+  return res.json();
+};
+
+export const fetchOrderById = async (orderId) => {
+  const res = await fetch(`${ORDER_URL}/api/orders/${orderId}`);
+  if (!res.ok) throw new Error('Failed to fetch order details');
+  return res.json();
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+  const res = await fetch(`${ORDER_URL}/api/orders/${orderId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status })
+  });
+  if (!res.ok) throw new Error('Failed to update order status');
+  return res.json();
+};
+
+// ===================== PAYMENT SERVICE =====================
+export const processPayment = async (paymentData) => {
+  const res = await fetch(`${PAYMENT_URL}/api/payments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(paymentData)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Payment failed');
+  return data;
+};
+
+export const fetchPaymentById = async (paymentId) => {
+  const res = await fetch(`${PAYMENT_URL}/api/payments/${paymentId}`);
+  if (!res.ok) throw new Error('Failed to fetch payment details');
+  return res.json();
+};

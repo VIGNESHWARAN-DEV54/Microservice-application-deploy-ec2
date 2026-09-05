@@ -1,57 +1,71 @@
 pipeline {
+    agent any
 
-    agent {
-        label 'ec2'
+    environment {
+        // Change this to your GitHub repo URL when deploying in Jenkins
+        REPO_URL = 'https://github.com/YOUR_GITHUB_USERNAME/ecommerce-microservices.git'
     }
 
     stages {
-
-        stage('Git Clone') {
+        // Stage 1: Checkout Source Code
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
+                echo 'Checking out source code from Git repository...'
+                // When running with multibranch pipeline or webhook, checkout scm is automatic.
+                // For standalone pipelines, replace with your git repo URL:
+                checkout scm
             }
         }
 
-        stage('Check Files') {
+        // Stage 2: Build Verification
+        stage('Build') {
             steps {
-                sh 'ls -la'
+                echo 'Validating Docker Compose configuration and preparing build...'
+                sh 'docker compose version'
             }
         }
 
+        // Stage 3: Test Configuration & Syntax
+        stage('Test') {
+            steps {
+                echo 'Testing docker-compose.yml configuration syntax...'
+                sh 'docker compose config'
+            }
+        }
+
+        // Stage 4: Docker Build Images
         stage('Docker Build') {
             steps {
+                echo 'Building Docker container images for all microservices...'
                 sh 'docker compose build'
             }
         }
 
-        stage('Stop Old Container') {
+        // Stage 5: Deploy Services with Docker Compose
+        stage('Docker Compose Deploy') {
             steps {
-                sh 'docker compose down || true'
-            }
-        }
-
-        stage('Start Application') {
-            steps {
+                echo 'Deploying application containers in detached mode...'
                 sh 'docker compose up -d'
-            }
-        }
-
-        stage('Check Container') {
-            steps {
+                echo 'Checking container health and status...'
                 sh 'docker compose ps'
             }
         }
     }
 
     post {
-
         success {
-            echo 'Application deployed successfully!'
+            echo '=================================================='
+            echo ' Pipeline Succeeded! All services deployed:      '
+            echo ' Frontend:        http://<SERVER_IP>:3000         '
+            echo ' Product Service: http://<SERVER_IP>:5001         '
+            echo ' User Service:    http://<SERVER_IP>:5002         '
+            echo ' Order Service:   http://<SERVER_IP>:5003         '
+            echo ' Payment Service: http://<SERVER_IP>:5004         '
+            echo '=================================================='
         }
-
         failure {
-            echo 'Deployment failed!'
+            echo 'Pipeline failed! Printing docker compose logs for debugging:'
+            sh 'docker compose logs --tail=50'
         }
     }
 }
