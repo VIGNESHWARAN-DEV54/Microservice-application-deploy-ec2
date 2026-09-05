@@ -12,7 +12,7 @@ pipeline {
         
         stage('Checkout') {
             steps {
-                
+                git branch: 'main', url: 'https://github.com/VIGNESHWARAN-DEV54/Microservice-application-deploy-ec2.git'
             }
         }
 
