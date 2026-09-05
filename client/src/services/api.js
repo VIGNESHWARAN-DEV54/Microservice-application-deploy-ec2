@@ -1,8 +1,15 @@
-// Base URLs configured from environment variables or defaults
-const PRODUCT_URL = process.env.REACT_APP_PRODUCT_SERVICE_URL || 'http://localhost:5001';
-const USER_URL = process.env.REACT_APP_USER_SERVICE_URL || 'http://localhost:5002';
-const ORDER_URL = process.env.REACT_APP_ORDER_SERVICE_URL || 'http://localhost:5003';
-const PAYMENT_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL || 'http://localhost:5004';
+// Helper to dynamically use the current browser hostname (supports localhost and EC2 public IP)
+const getBaseUrl = (envUrl, port) => {
+  if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost') {
+    return `http://${window.location.hostname}:${port}`;
+  }
+  return envUrl || `http://localhost:${port}`;
+};
+
+const PRODUCT_URL = getBaseUrl(process.env.REACT_APP_PRODUCT_SERVICE_URL, 5001);
+const USER_URL = getBaseUrl(process.env.REACT_APP_USER_SERVICE_URL, 5002);
+const ORDER_URL = getBaseUrl(process.env.REACT_APP_ORDER_SERVICE_URL, 5003);
+const PAYMENT_URL = getBaseUrl(process.env.REACT_APP_PAYMENT_SERVICE_URL, 5004);
 
 // ===================== PRODUCT SERVICE =====================
 export const fetchProducts = async (category = '') => {

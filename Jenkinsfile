@@ -22,6 +22,11 @@ pipeline {
                 sh 'docker compose version'
             }
         }
+        stage('Docker Compose Down') {
+            steps {
+        sh 'docker compose down'
+            }
+        }
         stage('Test') {
             steps {
                 sh 'docker compose config'
